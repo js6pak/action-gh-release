@@ -1,5 +1,6 @@
 import { setFailed, setOutput } from '@actions/core';
 import { getOctokit } from '@actions/github';
+import { retry } from '@octokit/plugin-retry';
 import { GitHubReleaser, release, upload } from './github';
 import { isTag, parseConfig, paths, unmatchedPatterns, uploadUrl } from './util';
 
@@ -46,7 +47,7 @@ async function run() {
           console.warn(`Abuse detected for request ${options.method} ${options.url}`);
         },
       },
-    });
+    }, retry);
     //);
     const rel = await release(config, new GitHubReleaser(gh));
     if (config.input_files && config.input_files.length > 0) {
